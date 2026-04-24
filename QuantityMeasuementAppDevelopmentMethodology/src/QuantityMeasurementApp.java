@@ -1,84 +1,52 @@
 /**
- * QuantityMeasurementApp - UC2: Feet and Inches Measurement Equality
+ * QuantityMeasurementAppUC3 - Unified Quantity Measurement System
  *
  * Author: Sajani G
- *
- * Description:
- * This application demonstrates equality comparison for two types of measurements:
- * Feet and Inches. Each measurement type is encapsulated in its own class and
- * supports value-based equality checks.
- *
- * Features:
- * - Compares two Feet values
- * - Compares two Inches values
- * - Handles null comparison, type safety, and floating-point equality
- *
- * Note:
- * Feet and Inches are treated as separate entities and are not compared with each other.
+ * Version: 3.0
  */
-
-package com.apps.quantitymeasurement;
-
-import java.util.Objects;
 
 public class QuantityMeasurementApp {
 
-    public static class Feet {
-        private final double value;
+    public static void printResult(Length l1, Length l2, String unit1, String unit2) {
+        boolean result = l1.equals(l2);
 
-        public Feet(double value) {
-            this.value = value;
-        }
+        System.out.println("Input: Quantity(" + l1Value(l1) + ", \"" + unit1 + "\") and Quantity("
+                + l2Value(l2) + ", \"" + unit2 + "\")");
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            Feet feet = (Feet) obj;
-            return Double.compare(feet.value, value) == 0;
-        }
+        System.out.println("Output: Equal (" + result + ")");
+        System.out.println();
+    }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(value);
+    private static double l1Value(Length l) {
+        try {
+            java.lang.reflect.Field f = Length.class.getDeclaredField("value");
+            f.setAccessible(true);
+            return f.getDouble(l);
+        } catch (Exception e) {
+            return 0;
         }
     }
 
-    public static class Inches {
-        private final double value;
-
-        public Inches(double value) {
-            this.value = value;
+    private static double l2Value(Length l) {
+        try {
+            java.lang.reflect.Field f = Length.class.getDeclaredField("value");
+            f.setAccessible(true);
+            return f.getDouble(l);
+        } catch (Exception e) {
+            return 0;
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            Inches inches = (Inches) obj;
-            return Double.compare(inches.value, value) == 0;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(value);
-        }
-    }
-
-    public static boolean checkFeetEquality(double v1, double v2) {
-        Feet f1 = new Feet(v1);
-        Feet f2 = new Feet(v2);
-        return f1.equals(f2);
-    }
-
-    public static boolean checkInchesEquality(double v1, double v2) {
-        Inches i1 = new Inches(v1);
-        Inches i2 = new Inches(v2);
-        return i1.equals(i2);
     }
 
     public static void main(String[] args) {
-        System.out.println("Feet Equality (1.0, 1.0): " + checkFeetEquality(1.0, 1.0));
-        System.out.println("Inches Equality (1.0, 1.0): " + checkInchesEquality(1.0, 1.0));
+
+        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
+        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
+
+        printResult(l1, l2, "feet", "inches");
+
+        Length l3 = new Length(1.0, Length.LengthUnit.INCHES);
+        Length l4 = new Length(1.0, Length.LengthUnit.INCHES);
+
+        printResult(l3, l4, "inch", "inch");
     }
 }
