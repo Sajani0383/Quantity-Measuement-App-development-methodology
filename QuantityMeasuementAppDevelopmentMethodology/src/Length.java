@@ -1,8 +1,8 @@
 /**
- * UC5: Quantity Length with Conversion Support
+ * UC6: Quantity Length with Addition Support
  *
  * Author: Sajani G
- * Version: 5.0
+ * Version: 6.0
  */
 
 public class Length {
@@ -16,7 +16,6 @@ public class Length {
         INCHES(1.0),
         YARDS(36.0),
         CENTIMETERS(0.393701);
-
         private final double factor;
 
         LengthUnit(double factor) {
@@ -65,16 +64,17 @@ public class Length {
         if (from == null || to == null || !Double.isFinite(value)) {
             throw new IllegalArgumentException();
         }
-
         double base = value * from.getFactor();
-        double result = base / to.getFactor();
-
-        return result;
+        return base / to.getFactor();
     }
 
-    public boolean compare(Length other) {
-        if (other == null) return false;
-        return Math.abs(this.toBase() - other.toBase()) < EPSILON;
+    public Length add(Length other) {
+        if (other == null) throw new IllegalArgumentException();
+
+        double sumBase = this.toBase() + other.toBase();
+        double result = sumBase / this.unit.getFactor();
+
+        return new Length(round(result), this.unit);
     }
 
     @Override
@@ -87,6 +87,6 @@ public class Length {
 
     @Override
     public String toString() {
-        return String.format("%.2f %s", value, unit);
+        return "Quantity(" + value + ", " + unit + ")";
     }
 }

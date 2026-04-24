@@ -1,44 +1,53 @@
 /**
- * QuantityMeasurementApp UC5
+ * QuantityMeasurementApp UC6
  *
  * Author: Sajani G
- * Version: 5.0
+ * Version: 6.0
  */
-
 public class QuantityMeasurementApp {
 
     public static boolean demonstrateLengthEquality(Length l1, Length l2) {
         return l1.equals(l2);
     }
 
-    public static boolean demonstrateLengthComparison(double v1, Length.LengthUnit u1,
-                                                      double v2, Length.LengthUnit u2) {
-        Length l1 = new Length(v1, u1);
-        Length l2 = new Length(v2, u2);
-        return l1.equals(l2);
+    public static Length demonstrateLengthConversion(Length l, Length.LengthUnit toUnit) {
+        return l.convertTo(toUnit);
     }
 
-    public static Length demonstrateLengthConversion(double value,
-                                                     Length.LengthUnit from,
-                                                     Length.LengthUnit to) {
-        Length l = new Length(value, from);
-        return l.convertTo(to);
+    public static Length demonstrateLengthAddition(Length l1, Length l2) {
+        return l1.add(l2);
     }
 
-    public static Length demonstrateLengthConversion(Length l,
-                                                     Length.LengthUnit to) {
-        return l.convertTo(to);
+    public static void printAdd(Length l1, Length l2) {
+        System.out.println("Input: add(" + l1 + ", " + l2 + ")");
+        System.out.println("Output: " + l1.add(l2));
+        System.out.println();
     }
 
     public static void main(String[] args) {
 
-        System.out.println("Input: convert(1.0, FEET, INCHES) -> Output: " +
-                Length.convert(1.0, Length.LengthUnit.FEET, Length.LengthUnit.INCHES));
+        printAdd(new Length(1.0, Length.LengthUnit.FEET),
+                new Length(2.0, Length.LengthUnit.FEET));
 
-        System.out.println("Input: convert(3.0, YARDS, FEET) -> Output: " +
-                Length.convert(3.0, Length.LengthUnit.YARDS, Length.LengthUnit.FEET));
+        printAdd(new Length(1.0, Length.LengthUnit.FEET),
+                new Length(12.0, Length.LengthUnit.INCHES));
 
-        System.out.println("Input: convert(36.0, INCHES, YARDS) -> Output: " +
-                Length.convert(36.0, Length.LengthUnit.INCHES, Length.LengthUnit.YARDS));
+        printAdd(new Length(12.0, Length.LengthUnit.INCHES),
+                new Length(1.0, Length.LengthUnit.FEET));
+
+        printAdd(new Length(1.0, Length.LengthUnit.YARDS),
+                new Length(3.0, Length.LengthUnit.FEET));
+
+        printAdd(new Length(36.0, Length.LengthUnit.INCHES),
+                new Length(1.0, Length.LengthUnit.YARDS));
+
+        printAdd(new Length(2.54, Length.LengthUnit.CENTIMETERS),
+                new Length(1.0, Length.LengthUnit.INCHES));
+
+        printAdd(new Length(5.0, Length.LengthUnit.FEET),
+                new Length(0.0, Length.LengthUnit.INCHES));
+
+        printAdd(new Length(5.0, Length.LengthUnit.FEET),
+                new Length(-2.0, Length.LengthUnit.FEET));
     }
 }
