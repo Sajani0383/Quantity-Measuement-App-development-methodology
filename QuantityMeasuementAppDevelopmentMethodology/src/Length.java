@@ -1,19 +1,15 @@
 /**
- * UC4: Generic Quantity Length Class with Extended Units
- *
- * Description:
- * Supports FEET, INCHES, YARDS, CENTIMETERS.
- * Uses base unit (inches) and precision-safe comparison.
+ * UC5: Quantity Length with Conversion Support
  *
  * Author: Sajani G
- * Version: 4.0
+ * Version: 5.0
  */
 
 public class Length {
 
     private double value;
     private LengthUnit unit;
-    private static final double EPSILON = 0.0001;
+    private static final double EPSILON = 1e-6;
 
     public enum LengthUnit {
         FEET(12.0),
@@ -21,19 +17,21 @@ public class Length {
         YARDS(36.0),
         CENTIMETERS(0.393701);
 
-        private final double conversionFactor;
+        private final double factor;
 
-        LengthUnit(double conversionFactor) {
-            this.conversionFactor = conversionFactor;
+        LengthUnit(double factor) {
+            this.factor = factor;
         }
 
-        public double getConversionFactor() {
-            return conversionFactor;
+        public double getFactor() {
+            return factor;
         }
     }
 
     public Length(double value, LengthUnit unit) {
-        if (unit == null) throw new IllegalArgumentException();
+        if (unit == null || !Double.isFinite(value)) {
+            throw new IllegalArgumentException();
+        }
         this.value = value;
         this.unit = unit;
     }
@@ -42,13 +40,41 @@ public class Length {
         return value;
     }
 
-    private double convertToBaseUnit() {
-        return value * unit.getConversionFactor();
+    public LengthUnit getUnit() {
+        return unit;
+    }
+
+    private double toBase() {
+        return value * unit.getFactor();
+    }
+
+    private static double round(double v) {
+        return Math.round(v * 100.0) / 100.0;
+    }
+
+    public Length convertTo(LengthUnit target) {
+        if (target == null) throw new IllegalArgumentException();
+
+        double base = toBase();
+        double converted = base / target.getFactor();
+
+        return new Length(round(converted), target);
+    }
+
+    public static double convert(double value, LengthUnit from, LengthUnit to) {
+        if (from == null || to == null || !Double.isFinite(value)) {
+            throw new IllegalArgumentException();
+        }
+
+        double base = value * from.getFactor();
+        double result = base / to.getFactor();
+
+        return result;
     }
 
     public boolean compare(Length other) {
         if (other == null) return false;
-        return Math.abs(this.convertToBaseUnit() - other.convertToBaseUnit()) < EPSILON;
+        return Math.abs(this.toBase() - other.toBase()) < EPSILON;
     }
 
     @Override
@@ -56,6 +82,11 @@ public class Length {
         if (this == obj) return true;
         if (obj == null || !(obj instanceof Length)) return false;
         Length other = (Length) obj;
-        return Math.abs(this.convertToBaseUnit() - other.convertToBaseUnit()) < EPSILON;
+        return Math.abs(this.toBase() - other.toBase()) < EPSILON;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%.2f %s", value, unit);
     }
 }
