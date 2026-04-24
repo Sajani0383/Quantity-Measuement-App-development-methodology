@@ -1,10 +1,3 @@
-/**
- * UC6: Quantity Length with Addition Support
- *
- * Author: Sajani G
- * Version: 6.0
- */
-
 public class Length {
 
     private double value;
@@ -16,6 +9,7 @@ public class Length {
         INCHES(1.0),
         YARDS(36.0),
         CENTIMETERS(0.393701);
+
         private final double factor;
 
         LengthUnit(double factor) {
@@ -64,6 +58,7 @@ public class Length {
         if (from == null || to == null || !Double.isFinite(value)) {
             throw new IllegalArgumentException();
         }
+
         double base = value * from.getFactor();
         return base / to.getFactor();
     }
@@ -75,6 +70,17 @@ public class Length {
         double result = sumBase / this.unit.getFactor();
 
         return new Length(round(result), this.unit);
+    }
+
+    public Length add(Length other, LengthUnit targetUnit) {
+        if (other == null || targetUnit == null) {
+            throw new IllegalArgumentException();
+        }
+
+        double sumBase = this.toBase() + other.toBase();
+        double result = sumBase / targetUnit.getFactor();
+
+        return new Length(round(result), targetUnit);
     }
 
     @Override
