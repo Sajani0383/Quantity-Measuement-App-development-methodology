@@ -1,52 +1,42 @@
 /**
- * QuantityMeasurementAppUC3 - Unified Quantity Measurement System
+ * QuantityMeasurementAppUC4
  *
  * Author: Sajani G
- * Version: 3.0
+ * Version: 4.0
  */
 
 public class QuantityMeasurementApp {
 
-    public static void printResult(Length l1, Length l2, String unit1, String unit2) {
-        boolean result = l1.equals(l2);
-
-        System.out.println("Input: Quantity(" + l1Value(l1) + ", \"" + unit1 + "\") and Quantity("
-                + l2Value(l2) + ", \"" + unit2 + "\")");
-
-        System.out.println("Output: Equal (" + result + ")");
+    public static void printResult(Length l1, Length l2) {
+        System.out.println("Input: Quantity(" + l1.getValue() + ", " + l1Unit(l1) +
+                ") and Quantity(" + l2.getValue() + ", " + l2Unit(l2) + ")");
+        System.out.println("Output: Equal (" + l1.equals(l2) + ")");
         System.out.println();
     }
 
-    private static double l1Value(Length l) {
-        try {
-            java.lang.reflect.Field f = Length.class.getDeclaredField("value");
-            f.setAccessible(true);
-            return f.getDouble(l);
-        } catch (Exception e) {
-            return 0;
-        }
+    private static String l1Unit(Length l) {
+        return l.getClass().getDeclaredFields()[1].getType().getSimpleName();
     }
 
-    private static double l2Value(Length l) {
-        try {
-            java.lang.reflect.Field f = Length.class.getDeclaredField("value");
-            f.setAccessible(true);
-            return f.getDouble(l);
-        } catch (Exception e) {
-            return 0;
-        }
+    private static String l2Unit(Length l) {
+        return l.getClass().getDeclaredFields()[1].getType().getSimpleName();
     }
 
     public static void main(String[] args) {
 
-        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
-        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
+        printResult(new Length(1.0, Length.LengthUnit.FEET),
+                new Length(12.0, Length.LengthUnit.INCHES));
 
-        printResult(l1, l2, "feet", "inches");
+        printResult(new Length(1.0, Length.LengthUnit.YARDS),
+                new Length(3.0, Length.LengthUnit.FEET));
 
-        Length l3 = new Length(1.0, Length.LengthUnit.INCHES);
-        Length l4 = new Length(1.0, Length.LengthUnit.INCHES);
+        printResult(new Length(1.0, Length.LengthUnit.YARDS),
+                new Length(36.0, Length.LengthUnit.INCHES));
 
-        printResult(l3, l4, "inch", "inch");
+        printResult(new Length(2.0, Length.LengthUnit.YARDS),
+                new Length(2.0, Length.LengthUnit.YARDS));
+
+        printResult(new Length(1.0, Length.LengthUnit.CENTIMETERS),
+                new Length(0.393701, Length.LengthUnit.INCHES));
     }
 }
