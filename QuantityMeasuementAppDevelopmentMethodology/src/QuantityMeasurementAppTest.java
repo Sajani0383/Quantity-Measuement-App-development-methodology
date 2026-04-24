@@ -1,7 +1,16 @@
+/**
+ * Use Case 5: Conversion from one unit to another
+ *
+ * Author: Sajani G
+ * Version: 5.0
+ */
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class QuantityMeasurementAppTest {
+
+    private static final double EPSILON = 1e-6;
 
     @Test
     public void testFeetEquality() {
@@ -52,9 +61,9 @@ public class QuantityMeasurementAppTest {
     }
 
     @Test
-    public void centimeterEqualsInches() {
-        assertTrue(new Length(1.0, Length.LengthUnit.CENTIMETERS)
-                .equals(new Length(0.393701, Length.LengthUnit.INCHES)));
+    public void centimeterEquals39Point3701Inches() {
+        assertTrue(new Length(100.0, Length.LengthUnit.CENTIMETERS)
+                .equals(new Length(39.3701, Length.LengthUnit.INCHES)));
     }
 
     @Test
@@ -70,29 +79,62 @@ public class QuantityMeasurementAppTest {
     }
 
     @Test
-    public void yardNotEqual10Inches() {
+    public void yardNotEqualToInches() {
         assertFalse(new Length(1.0, Length.LengthUnit.YARDS)
                 .equals(new Length(10.0, Length.LengthUnit.INCHES)));
     }
 
     @Test
-    public void sameReferenceEquality() {
+    public void referenceEqualitySameObject() {
         Length l = new Length(1.0, Length.LengthUnit.FEET);
         assertTrue(l.equals(l));
     }
 
     @Test
-    public void nullCheck() {
+    public void equalsReturnsFalseForNull() {
         Length l = new Length(1.0, Length.LengthUnit.FEET);
         assertFalse(l.equals(null));
     }
 
     @Test
-    public void transitiveProperty() {
+    public void reflexiveSymmetricAndTransitiveProperty() {
         Length a = new Length(1.0, Length.LengthUnit.YARDS);
         Length b = new Length(3.0, Length.LengthUnit.FEET);
         Length c = new Length(36.0, Length.LengthUnit.INCHES);
 
-        assertTrue(a.equals(b) && b.equals(c) && a.equals(c));
+        assertTrue(a.equals(b));
+        assertTrue(b.equals(c));
+        assertTrue(a.equals(c));
+    }
+
+    @Test
+    public void differentValuesSameUnitNotEqual() {
+        assertFalse(new Length(1.0, Length.LengthUnit.FEET)
+                .equals(new Length(2.0, Length.LengthUnit.FEET)));
+    }
+
+    @Test
+    public void crossUnitEqualityDemonstrateMethod() {
+        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
+        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
+
+        assertTrue(QuantityMeasurementApp.demonstrateLengthEquality(l1, l2));
+    }
+
+    @Test
+    public void convertFeetToInches() {
+        double result = Length.convert(1.0, Length.LengthUnit.FEET, Length.LengthUnit.INCHES);
+        assertEquals(12.0, result, EPSILON);
+    }
+
+    @Test
+    public void convertYardsToInchesUsingOverloadedMethod() {
+        Length lengthInYards = new Length(2.0, Length.LengthUnit.YARDS);
+        Length lengthInInches = QuantityMeasurementApp
+                .demonstrateLengthConversion(lengthInYards, Length.LengthUnit.INCHES);
+
+        Length expected = new Length(72.0, Length.LengthUnit.INCHES);
+
+        assertTrue(QuantityMeasurementApp.demonstrateLengthEquality(lengthInInches, expected));
     }
 }
