@@ -1,7 +1,7 @@
 /**
  * LengthUnit.java
  *
- * UC10 and UC11: Length Unit Enum Implementing IMeasurable
+ * UC12: Length Unit Enum Implementing IMeasurable
  *
  * This enum defines length units and their conversion factors.
  * It implements IMeasurable so that it can be used with the
@@ -16,7 +16,7 @@
  * 1 centimeter = 0.393701 inches
  *
  * @author Sajani G
- * @version 11.0
+ * @version 12.0
  * @since UC10
  */
 public enum LengthUnit implements IMeasurable {

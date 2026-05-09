@@ -1,24 +1,20 @@
 /**
  * QuantityMeasurementApp.java
  *
- * UC11: Quantity Measurement Application
+ * UC12: Quantity Measurement Application
  *
- * This class demonstrates the generic Quantity class.
- *
- * The same methods work for:
- * Quantity<LengthUnit>
- * Quantity<WeightUnit>
- * Quantity<VolumeUnit>
- *
- * Demonstrated operations:
+ * This class demonstrates the generic Quantity class with:
  * 1. Equality comparison
- * 2. Unit conversion
+ * 2. Conversion
  * 3. Addition
- * 4. Addition with target unit
+ * 4. Subtraction
+ * 5. Division
+ *
+ * The same generic methods work for length, weight, and volume.
  *
  * @author Sajani G
- * @version 11.0
- * @since UC11
+ * @version 12.0
+ * @since UC12
  */
 public class QuantityMeasurementApp {
 
@@ -51,79 +47,91 @@ public class QuantityMeasurementApp {
         return quantity1.add(quantity2, targetUnit);
     }
 
+    public static <U extends IMeasurable> Quantity<U> demonstrateSubtraction(
+            Quantity<U> quantity1,
+            Quantity<U> quantity2
+    ) {
+        return quantity1.subtract(quantity2);
+    }
+
+    public static <U extends IMeasurable> Quantity<U> demonstrateSubtraction(
+            Quantity<U> quantity1,
+            Quantity<U> quantity2,
+            U targetUnit
+    ) {
+        return quantity1.subtract(quantity2, targetUnit);
+    }
+
+    public static <U extends IMeasurable> double demonstrateDivision(
+            Quantity<U> quantity1,
+            Quantity<U> quantity2
+    ) {
+        return quantity1.divide(quantity2);
+    }
+
     public static void main(String[] args) {
-        Quantity<WeightUnit> weightInGrams = new Quantity<>(1000.0, WeightUnit.GRAM);
-        Quantity<WeightUnit> weightInKilograms = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        Quantity<LengthUnit> tenFeet = new Quantity<>(10.0, LengthUnit.FEET);
+        Quantity<LengthUnit> sixInches = new Quantity<>(6.0, LengthUnit.INCHES);
 
-        boolean areWeightsEqual = demonstrateEquality(weightInGrams, weightInKilograms);
-        System.out.println("Are weights equal? " + areWeightsEqual);
+        Quantity<WeightUnit> tenKilograms = new Quantity<>(10.0, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> fiveThousandGrams = new Quantity<>(5000.0, WeightUnit.GRAM);
 
-        Quantity<WeightUnit> convertedWeight = demonstrateConversion(
-                weightInGrams,
-                WeightUnit.KILOGRAM
+        Quantity<VolumeUnit> fiveLitres = new Quantity<>(5.0, VolumeUnit.LITRE);
+        Quantity<VolumeUnit> fiveHundredMillilitres = new Quantity<>(500.0, VolumeUnit.MILLILITRE);
+
+        System.out.println("Subtraction Operations");
+
+        Quantity<LengthUnit> lengthDifference = demonstrateSubtraction(
+                tenFeet,
+                sixInches
         );
-        System.out.println("Converted Weight: " + convertedWeight);
+        System.out.println("10 FEET - 6 INCHES = " + lengthDifference);
 
-        Quantity<WeightUnit> weightInPounds = new Quantity<>(2.20462, WeightUnit.POUND);
-
-        Quantity<WeightUnit> sumWeight = demonstrateAddition(
-                weightInKilograms,
-                weightInPounds
-        );
-        System.out.println("Sum Weight: " + sumWeight);
-
-        Quantity<WeightUnit> sumWeightInGrams = demonstrateAddition(
-                weightInKilograms,
-                weightInPounds,
-                WeightUnit.GRAM
-        );
-        System.out.println("Sum Weight in Grams: " + sumWeightInGrams);
-
-        Quantity<LengthUnit> lengthInFeet = new Quantity<>(1.0, LengthUnit.FEET);
-        Quantity<LengthUnit> lengthInInches = new Quantity<>(12.0, LengthUnit.INCHES);
-
-        boolean areLengthsEqual = demonstrateEquality(lengthInFeet, lengthInInches);
-        System.out.println("Are lengths equal? " + areLengthsEqual);
-
-        Quantity<LengthUnit> convertedLength = demonstrateConversion(
-                lengthInFeet,
+        Quantity<LengthUnit> lengthDifferenceInInches = demonstrateSubtraction(
+                tenFeet,
+                sixInches,
                 LengthUnit.INCHES
         );
-        System.out.println("Converted Length: " + convertedLength);
+        System.out.println("10 FEET - 6 INCHES in INCHES = " + lengthDifferenceInInches);
 
-        Quantity<LengthUnit> sumLength = demonstrateAddition(
-                lengthInFeet,
-                lengthInInches,
-                LengthUnit.FEET
+        Quantity<WeightUnit> weightDifference = demonstrateSubtraction(
+                tenKilograms,
+                fiveThousandGrams
         );
-        System.out.println("Sum Length: " + sumLength);
+        System.out.println("10 KILOGRAM - 5000 GRAM = " + weightDifference);
 
-        Quantity<VolumeUnit> volumeInLitre = new Quantity<>(1.0, VolumeUnit.LITRE);
-        Quantity<VolumeUnit> volumeInMillilitre = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
-
-        boolean areVolumesEqual = demonstrateEquality(volumeInLitre, volumeInMillilitre);
-        System.out.println("Are volumes equal? " + areVolumesEqual);
-
-        Quantity<VolumeUnit> convertedVolume = demonstrateConversion(
-                volumeInLitre,
-                VolumeUnit.MILLILITRE
+        Quantity<VolumeUnit> volumeDifference = demonstrateSubtraction(
+                fiveLitres,
+                fiveHundredMillilitres
         );
-        System.out.println("Converted Volume: " + convertedVolume);
+        System.out.println("5 LITRE - 500 MILLILITRE = " + volumeDifference);
 
-        Quantity<VolumeUnit> volumeInGallon = new Quantity<>(1.0, VolumeUnit.GALLON);
+        System.out.println();
 
-        Quantity<VolumeUnit> sumVolume = demonstrateAddition(
-                volumeInLitre,
-                volumeInMillilitre,
-                VolumeUnit.LITRE
+        System.out.println("Division Operations");
+
+        double lengthRatio = demonstrateDivision(
+                new Quantity<>(10.0, LengthUnit.FEET),
+                new Quantity<>(2.0, LengthUnit.FEET)
         );
-        System.out.println("Sum Volume: " + sumVolume);
+        System.out.println("10 FEET / 2 FEET = " + lengthRatio);
 
-        Quantity<VolumeUnit> sumVolumeInMillilitre = demonstrateAddition(
-                volumeInLitre,
-                volumeInGallon,
-                VolumeUnit.MILLILITRE
+        double crossLengthRatio = demonstrateDivision(
+                new Quantity<>(24.0, LengthUnit.INCHES),
+                new Quantity<>(2.0, LengthUnit.FEET)
         );
-        System.out.println("Sum Volume in Millilitres: " + sumVolumeInMillilitre);
+        System.out.println("24 INCHES / 2 FEET = " + crossLengthRatio);
+
+        double weightRatio = demonstrateDivision(
+                new Quantity<>(10.0, WeightUnit.KILOGRAM),
+                new Quantity<>(5.0, WeightUnit.KILOGRAM)
+        );
+        System.out.println("10 KILOGRAM / 5 KILOGRAM = " + weightRatio);
+
+        double volumeRatio = demonstrateDivision(
+                new Quantity<>(5.0, VolumeUnit.LITRE),
+                new Quantity<>(10.0, VolumeUnit.LITRE)
+        );
+        System.out.println("5 LITRE / 10 LITRE = " + volumeRatio);
     }
 }
