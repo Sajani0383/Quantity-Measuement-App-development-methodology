@@ -1,30 +1,43 @@
-public class Length {
+/**
+ * Length.java
+ *
+ * UC8: Refactored Quantity Length Class
+ *
+ * This class represents a length value with a specific unit.
+ * The conversion responsibility is delegated to the standalone LengthUnit enum.
+ *
+ * Responsibilities:
+ * 1. Store length value and unit.
+ * 2. Compare two length objects.
+ * 3. Convert one length unit to another.
+ * 4. Add two length values.
+ *
+ * Rounding is done only after the final result is calculated.
+ * This avoids precision loss during intermediate conversion.
+ *
+ * Example:
+ * 2.54 centimeters should convert to exactly 1.0 inch approximately.
+ * If rounding is done too early in the base conversion step, the result
+ * becomes 0.96 inches. So intermediate values are not rounded.
+ *
+ * @author Sajani G
+ * @version 8.0
+ * @since UC8
+ */
 
+public class Length {
     private double value;
     private LengthUnit unit;
-    private static final double EPSILON = 1e-6;
-
-    public enum LengthUnit {
-        FEET(12.0),
-        INCHES(1.0),
-        YARDS(36.0),
-        CENTIMETERS(0.393701);
-
-        private final double factor;
-
-        LengthUnit(double factor) {
-            this.factor = factor;
-        }
-
-        public double getFactor() {
-            return factor;
-        }
-    }
 
     public Length(double value, LengthUnit unit) {
-        if (unit == null || !Double.isFinite(value)) {
-            throw new IllegalArgumentException();
+        if (unit == null) {
+            throw new IllegalArgumentException("Length unit cannot be null");
         }
+
+        if (Double.isNaN(value) || Double.isInfinite(value)) {
+            throw new IllegalArgumentException("Invalid length value");
+        }
+
         this.value = value;
         this.unit = unit;
     }
@@ -37,58 +50,59 @@ public class Length {
         return unit;
     }
 
-    private double toBase() {
-        return value * unit.getFactor();
-    }
-
-    private static double round(double v) {
-        return Math.round(v * 100.0) / 100.0;
-    }
-
-    public Length convertTo(LengthUnit target) {
-        if (target == null) throw new IllegalArgumentException();
-
-        double base = toBase();
-        double converted = base / target.getFactor();
-
-        return new Length(round(converted), target);
-    }
-
-    public static double convert(double value, LengthUnit from, LengthUnit to) {
-        if (from == null || to == null || !Double.isFinite(value)) {
-            throw new IllegalArgumentException();
+    public Length convertTo(LengthUnit targetUnit) {
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
         }
 
-        double base = value * from.getFactor();
-        return base / to.getFactor();
+        double baseValue = unit.convertToBaseUnit(value);
+        double convertedValue = targetUnit.convertFromBaseUnit(baseValue);
+
+        return new Length(round(convertedValue), targetUnit);
     }
 
-    public Length add(Length other) {
-        if (other == null) throw new IllegalArgumentException();
-
-        double sumBase = this.toBase() + other.toBase();
-        double result = sumBase / this.unit.getFactor();
-
-        return new Length(round(result), this.unit);
+    public Length add(Length length) {
+        return add(length, this.unit);
     }
 
-    public Length add(Length other, LengthUnit targetUnit) {
-        if (other == null || targetUnit == null) {
-            throw new IllegalArgumentException();
+    public Length add(Length length, LengthUnit targetUnit) {
+        if (length == null) {
+            throw new IllegalArgumentException("Length object cannot be null");
         }
 
-        double sumBase = this.toBase() + other.toBase();
-        double result = sumBase / targetUnit.getFactor();
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
 
-        return new Length(round(result), targetUnit);
+        double firstBaseValue = this.unit.convertToBaseUnit(this.value);
+        double secondBaseValue = length.unit.convertToBaseUnit(length.value);
+        double totalBaseValue = firstBaseValue + secondBaseValue;
+        double resultValue = targetUnit.convertFromBaseUnit(totalBaseValue);
+
+        return new Length(round(resultValue), targetUnit);
+    }
+
+    private double convertToBaseUnit() {
+        return unit.convertToBaseUnit(value);
+    }
+
+    private double round(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || !(obj instanceof Length)) return false;
-        Length other = (Length) obj;
-        return Math.abs(this.toBase() - other.toBase()) < EPSILON;
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+
+        Length length = (Length) object;
+
+        return Math.abs(this.convertToBaseUnit() - length.convertToBaseUnit()) < 0.01;
     }
 
     @Override
