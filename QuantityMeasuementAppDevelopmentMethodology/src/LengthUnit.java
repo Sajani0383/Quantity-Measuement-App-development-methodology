@@ -1,34 +1,29 @@
 /**
  * LengthUnit.java
  *
- * UC8: Refactoring Unit Enum to Standalone Class
+ * UC10: Length Unit Enum Implementing IMeasurable
  *
- * This enum represents different length units used in the Quantity
- * Measurement application. In UC8, LengthUnit is extracted as a standalone
- * enum instead of being placed inside the Length class.
+ * This enum defines length units and their conversion factors.
+ * It implements IMeasurable so that it can be used with the
+ * generic Quantity class.
  *
- * The main responsibility of this enum is to store the conversion factor
- * of each unit and perform conversion to and from the base unit.
+ * Base unit for length: Inches
  *
- * Base unit: Feet
- *
- * Supported units:
- * FEET, INCHES, YARDS, CENTIMETERS
- *
- * Important:
- * Rounding is not done inside this enum because these methods are used
- * for intermediate calculations. Rounding is done only in the Length class
- * after the final conversion or addition result is calculated.
+ * Conversion factors:
+ * 1 foot = 12 inches
+ * 1 inch = 1 inch
+ * 1 yard = 36 inches
+ * 1 centimeter = 0.393701 inches
  *
  * @author Sajani G
- * @version 8.0
- * @since UC8
+ * @version 10.0
+ * @since UC10
  */
-public enum LengthUnit {
-    FEET(1.0),
-    INCHES(1.0 / 12.0),
-    YARDS(3.0),
-    CENTIMETERS(1.0 / 30.48);
+public enum LengthUnit implements IMeasurable {
+    FEET(12.0),
+    INCHES(1.0),
+    YARDS(36.0),
+    CENTIMETERS(0.393701);
 
     private final double conversionFactor;
 
@@ -36,13 +31,23 @@ public enum LengthUnit {
         this.conversionFactor = conversionFactor;
     }
 
+    @Override
     public double getConversionFactor() {
         return conversionFactor;
     }
+
+    @Override
     public double convertToBaseUnit(double value) {
         return value * conversionFactor;
     }
+
+    @Override
     public double convertFromBaseUnit(double baseValue) {
         return baseValue / conversionFactor;
+    }
+
+    @Override
+    public String getUnitName() {
+        return name();
     }
 }
