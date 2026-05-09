@@ -1,7 +1,7 @@
 /**
  * WeightUnit.java
  *
- * UC12: Weight Unit Enum Implementing IMeasurable
+ * UC13: Weight Unit Enum Implementing IMeasurable
  *
  * This enum defines weight units and their conversion factors.
  * It implements IMeasurable so that it can be used with the

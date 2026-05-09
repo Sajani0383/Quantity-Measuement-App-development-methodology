@@ -1,7 +1,7 @@
 /**
  * QuantityMeasurementApp.java
  *
- * UC12: Quantity Measurement Application
+ * UC13: Quantity Measurement Application
  *
  * This class demonstrates the generic Quantity class with:
  * 1. Equality comparison
@@ -13,8 +13,8 @@
  * The same generic methods work for length, weight, and volume.
  *
  * @author Sajani G
- * @version 12.0
- * @since UC12
+ * @version 13.0
+ * @since UC13
  */
 public class QuantityMeasurementApp {
 
@@ -70,6 +70,38 @@ public class QuantityMeasurementApp {
     }
 
     public static void main(String[] args) {
+        Quantity<LengthUnit> oneFoot = new Quantity<>(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> twelveInches = new Quantity<>(12.0, LengthUnit.INCHES);
+
+        Quantity<WeightUnit> oneKilogram = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> thousandGrams = new Quantity<>(1000.0, WeightUnit.GRAM);
+
+        Quantity<VolumeUnit> oneLitre = new Quantity<>(1.0, VolumeUnit.LITRE);
+        Quantity<VolumeUnit> thousandMillilitres = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+
+        System.out.println("Equality Operations");
+        System.out.println("1 FEET equals 12 INCHES: " + demonstrateEquality(oneFoot, twelveInches));
+        System.out.println("1 KILOGRAM equals 1000 GRAM: " + demonstrateEquality(oneKilogram, thousandGrams));
+        System.out.println("1 LITRE equals 1000 MILLILITRE: " + demonstrateEquality(oneLitre, thousandMillilitres));
+
+        System.out.println();
+
+        System.out.println("Conversion Operations");
+        System.out.println("1 FEET to INCHES: " + demonstrateConversion(oneFoot, LengthUnit.INCHES));
+        System.out.println("1 KILOGRAM to GRAM: " + demonstrateConversion(oneKilogram, WeightUnit.GRAM));
+        System.out.println("1 LITRE to MILLILITRE: " + demonstrateConversion(oneLitre, VolumeUnit.MILLILITRE));
+
+        System.out.println();
+
+        System.out.println("Addition Operations");
+        System.out.println("1 FEET + 12 INCHES = " + demonstrateAddition(oneFoot, twelveInches));
+        System.out.println("1 KILOGRAM + 1000 GRAM = " + demonstrateAddition(oneKilogram, thousandGrams));
+        System.out.println("1 LITRE + 1000 MILLILITRE = " + demonstrateAddition(oneLitre, thousandMillilitres));
+
+        System.out.println();
+
+        System.out.println("Subtraction Operations");
+
         Quantity<LengthUnit> tenFeet = new Quantity<>(10.0, LengthUnit.FEET);
         Quantity<LengthUnit> sixInches = new Quantity<>(6.0, LengthUnit.INCHES);
 
@@ -79,59 +111,39 @@ public class QuantityMeasurementApp {
         Quantity<VolumeUnit> fiveLitres = new Quantity<>(5.0, VolumeUnit.LITRE);
         Quantity<VolumeUnit> fiveHundredMillilitres = new Quantity<>(500.0, VolumeUnit.MILLILITRE);
 
-        System.out.println("Subtraction Operations");
-
-        Quantity<LengthUnit> lengthDifference = demonstrateSubtraction(
-                tenFeet,
-                sixInches
-        );
-        System.out.println("10 FEET - 6 INCHES = " + lengthDifference);
-
-        Quantity<LengthUnit> lengthDifferenceInInches = demonstrateSubtraction(
+        System.out.println("10 FEET - 6 INCHES = " + demonstrateSubtraction(tenFeet, sixInches));
+        System.out.println("10 FEET - 6 INCHES in INCHES = " + demonstrateSubtraction(
                 tenFeet,
                 sixInches,
                 LengthUnit.INCHES
-        );
-        System.out.println("10 FEET - 6 INCHES in INCHES = " + lengthDifferenceInInches);
-
-        Quantity<WeightUnit> weightDifference = demonstrateSubtraction(
+        ));
+        System.out.println("10 KILOGRAM - 5000 GRAM = " + demonstrateSubtraction(
                 tenKilograms,
                 fiveThousandGrams
-        );
-        System.out.println("10 KILOGRAM - 5000 GRAM = " + weightDifference);
-
-        Quantity<VolumeUnit> volumeDifference = demonstrateSubtraction(
+        ));
+        System.out.println("5 LITRE - 500 MILLILITRE = " + demonstrateSubtraction(
                 fiveLitres,
                 fiveHundredMillilitres
-        );
-        System.out.println("5 LITRE - 500 MILLILITRE = " + volumeDifference);
+        ));
 
         System.out.println();
 
         System.out.println("Division Operations");
-
-        double lengthRatio = demonstrateDivision(
+        System.out.println("10 FEET / 2 FEET = " + demonstrateDivision(
                 new Quantity<>(10.0, LengthUnit.FEET),
                 new Quantity<>(2.0, LengthUnit.FEET)
-        );
-        System.out.println("10 FEET / 2 FEET = " + lengthRatio);
-
-        double crossLengthRatio = demonstrateDivision(
+        ));
+        System.out.println("24 INCHES / 2 FEET = " + demonstrateDivision(
                 new Quantity<>(24.0, LengthUnit.INCHES),
                 new Quantity<>(2.0, LengthUnit.FEET)
-        );
-        System.out.println("24 INCHES / 2 FEET = " + crossLengthRatio);
-
-        double weightRatio = demonstrateDivision(
+        ));
+        System.out.println("10 KILOGRAM / 5 KILOGRAM = " + demonstrateDivision(
                 new Quantity<>(10.0, WeightUnit.KILOGRAM),
                 new Quantity<>(5.0, WeightUnit.KILOGRAM)
-        );
-        System.out.println("10 KILOGRAM / 5 KILOGRAM = " + weightRatio);
-
-        double volumeRatio = demonstrateDivision(
+        ));
+        System.out.println("5 LITRE / 10 LITRE = " + demonstrateDivision(
                 new Quantity<>(5.0, VolumeUnit.LITRE),
                 new Quantity<>(10.0, VolumeUnit.LITRE)
-        );
-        System.out.println("5 LITRE / 10 LITRE = " + volumeRatio);
+        ));
     }
 }
