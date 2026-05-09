@@ -3,29 +3,30 @@ import java.util.Objects;
 /**
  * Quantity.java
  *
- * UC10 and UC11: Generic Quantity Class
+ * UC12: Generic Quantity Class with Extended Arithmetic Operations
  *
  * This class represents a quantity with a numeric value and a measurable unit.
  * The unit must implement the IMeasurable interface.
  *
- * This generic class replaces separate category-specific classes such as
- * Length, Weight, and Volume.
+ * In UC12, this class supports:
+ * 1. Equality comparison
+ * 2. Unit conversion
+ * 3. Addition
+ * 4. Subtraction
+ * 5. Division
  *
- * It can work with:
+ * The same class works with:
  * Quantity<LengthUnit>
  * Quantity<WeightUnit>
  * Quantity<VolumeUnit>
  *
- * Responsibilities:
- * 1. Store value and unit.
- * 2. Convert quantity from one unit to another.
- * 3. Add two compatible quantities.
- * 4. Compare two compatible quantities.
+ * Subtraction returns a new Quantity object.
+ * Division returns a dimensionless double value.
  *
  * @param <U> measurable unit type
  *
  * @author Sajani G
- * @version 11.0
+ * @version 12.0
  * @since UC10
  */
 public class Quantity<U extends IMeasurable> {
@@ -54,13 +55,7 @@ public class Quantity<U extends IMeasurable> {
     }
 
     public Quantity<U> convertTo(U targetUnit) {
-        if (targetUnit == null) {
-            throw new IllegalArgumentException("Target unit cannot be null");
-        }
-
-        if (unit.getClass() != targetUnit.getClass()) {
-            throw new IllegalArgumentException("Incompatible unit category");
-        }
+        validateTargetUnit(targetUnit);
 
         double baseValue = unit.convertToBaseUnit(value);
         double convertedValue = targetUnit.convertFromBaseUnit(baseValue);
@@ -73,21 +68,8 @@ public class Quantity<U extends IMeasurable> {
     }
 
     public Quantity<U> add(Quantity<U> other, U targetUnit) {
-        if (other == null) {
-            throw new IllegalArgumentException("Quantity cannot be null");
-        }
-
-        if (targetUnit == null) {
-            throw new IllegalArgumentException("Target unit cannot be null");
-        }
-
-        if (this.unit.getClass() != other.unit.getClass()) {
-            throw new IllegalArgumentException("Cannot add quantities of different categories");
-        }
-
-        if (this.unit.getClass() != targetUnit.getClass()) {
-            throw new IllegalArgumentException("Target unit belongs to different category");
-        }
+        validateOtherQuantity(other);
+        validateTargetUnit(targetUnit);
 
         double firstBaseValue = this.unit.convertToBaseUnit(this.value);
         double secondBaseValue = other.unit.convertToBaseUnit(other.value);
@@ -97,12 +79,65 @@ public class Quantity<U extends IMeasurable> {
         return new Quantity<>(round(resultValue), targetUnit);
     }
 
+    public Quantity<U> subtract(Quantity<U> other) {
+        return subtract(other, this.unit);
+    }
+
+    public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+        validateOtherQuantity(other);
+        validateTargetUnit(targetUnit);
+
+        double firstBaseValue = this.unit.convertToBaseUnit(this.value);
+        double secondBaseValue = other.unit.convertToBaseUnit(other.value);
+        double resultBaseValue = firstBaseValue - secondBaseValue;
+        double resultValue = targetUnit.convertFromBaseUnit(resultBaseValue);
+
+        return new Quantity<>(round(resultValue), targetUnit);
+    }
+
+    public double divide(Quantity<U> other) {
+        validateOtherQuantity(other);
+
+        double firstBaseValue = this.unit.convertToBaseUnit(this.value);
+        double secondBaseValue = other.unit.convertToBaseUnit(other.value);
+
+        if (Math.abs(secondBaseValue) < 0.0000001) {
+            throw new ArithmeticException("Division by zero is not allowed");
+        }
+
+        return roundDivision(firstBaseValue / secondBaseValue);
+    }
+
+    private void validateOtherQuantity(Quantity<U> other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Quantity cannot be null");
+        }
+
+        if (this.unit.getClass() != other.unit.getClass()) {
+            throw new IllegalArgumentException("Incompatible measurement categories");
+        }
+    }
+
+    private void validateTargetUnit(U targetUnit) {
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
+
+        if (this.unit.getClass() != targetUnit.getClass()) {
+            throw new IllegalArgumentException("Target unit belongs to a different category");
+        }
+    }
+
     private double convertToBaseUnit() {
         return unit.convertToBaseUnit(value);
     }
 
     private double round(double value) {
         return Math.round(value * 100.0) / 100.0;
+    }
+
+    private double roundDivision(double value) {
+        return Math.round(value * 1000000.0) / 1000000.0;
     }
 
     @Override
