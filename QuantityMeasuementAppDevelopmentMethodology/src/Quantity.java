@@ -3,17 +3,18 @@ import java.util.Objects;
 /**
  * Quantity.java
  *
- * UC10: Generic Quantity Class
+ * UC10 and UC11: Generic Quantity Class
  *
  * This class represents a quantity with a numeric value and a measurable unit.
  * The unit must implement the IMeasurable interface.
  *
  * This generic class replaces separate category-specific classes such as
- * Length and Weight.
+ * Length, Weight, and Volume.
  *
  * It can work with:
  * Quantity<LengthUnit>
  * Quantity<WeightUnit>
+ * Quantity<VolumeUnit>
  *
  * Responsibilities:
  * 1. Store value and unit.
@@ -24,7 +25,7 @@ import java.util.Objects;
  * @param <U> measurable unit type
  *
  * @author Sajani G
- * @version 10.0
+ * @version 11.0
  * @since UC10
  */
 public class Quantity<U extends IMeasurable> {
