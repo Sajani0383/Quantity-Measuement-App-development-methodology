@@ -1,7 +1,7 @@
 /**
  * VolumeUnit.java
  *
- * UC12: Volume Unit Enum Implementing IMeasurable
+ * UC13: Volume Unit Enum Implementing IMeasurable
  *
  * This enum defines volume units and their conversion factors.
  * It implements IMeasurable so that it can be used with the
@@ -15,7 +15,7 @@
  * 1 gallon = 3.78541 litres
  *
  * @author Sajani G
- * @version 12.0
+ * @version 13.0
  * @since UC11
  */
 public enum VolumeUnit implements IMeasurable {

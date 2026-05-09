@@ -1,14 +1,22 @@
 import java.util.Objects;
+import java.util.function.DoubleBinaryOperator;
 
 /**
  * Quantity.java
  *
- * UC12: Generic Quantity Class with Extended Arithmetic Operations
+ * UC13: Generic Quantity Class with Centralized Arithmetic Logic
  *
  * This class represents a quantity with a numeric value and a measurable unit.
  * The unit must implement the IMeasurable interface.
  *
- * In UC12, this class supports:
+ * In UC13, arithmetic logic is refactored to follow the DRY principle.
+ * Addition, subtraction, and division now use a centralized helper method
+ * called performArithmetic().
+ *
+ * The ArithmeticOperation enum represents arithmetic operations using
+ * lambda expressions.
+ *
+ * Supported operations:
  * 1. Equality comparison
  * 2. Unit conversion
  * 3. Addition
@@ -20,13 +28,10 @@ import java.util.Objects;
  * Quantity<WeightUnit>
  * Quantity<VolumeUnit>
  *
- * Subtraction returns a new Quantity object.
- * Division returns a dimensionless double value.
- *
  * @param <U> measurable unit type
  *
  * @author Sajani G
- * @version 12.0
+ * @version 13.0
  * @since UC10
  */
 public class Quantity<U extends IMeasurable> {
@@ -60,7 +65,7 @@ public class Quantity<U extends IMeasurable> {
         double baseValue = unit.convertToBaseUnit(value);
         double convertedValue = targetUnit.convertFromBaseUnit(baseValue);
 
-        return new Quantity<>(round(convertedValue), targetUnit);
+        return new Quantity<>(roundToTwoDecimals(convertedValue), targetUnit);
     }
 
     public Quantity<U> add(Quantity<U> other) {
@@ -68,15 +73,12 @@ public class Quantity<U extends IMeasurable> {
     }
 
     public Quantity<U> add(Quantity<U> other, U targetUnit) {
-        validateOtherQuantity(other);
-        validateTargetUnit(targetUnit);
+        validateArithmeticOperands(other, targetUnit, true);
 
-        double firstBaseValue = this.unit.convertToBaseUnit(this.value);
-        double secondBaseValue = other.unit.convertToBaseUnit(other.value);
-        double totalBaseValue = firstBaseValue + secondBaseValue;
-        double resultValue = targetUnit.convertFromBaseUnit(totalBaseValue);
+        double resultBaseValue = performArithmetic(other, ArithmeticOperation.ADD);
+        double resultValue = targetUnit.convertFromBaseUnit(resultBaseValue);
 
-        return new Quantity<>(round(resultValue), targetUnit);
+        return new Quantity<>(roundToTwoDecimals(resultValue), targetUnit);
     }
 
     public Quantity<U> subtract(Quantity<U> other) {
@@ -84,37 +86,45 @@ public class Quantity<U extends IMeasurable> {
     }
 
     public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
-        validateOtherQuantity(other);
-        validateTargetUnit(targetUnit);
+        validateArithmeticOperands(other, targetUnit, true);
 
-        double firstBaseValue = this.unit.convertToBaseUnit(this.value);
-        double secondBaseValue = other.unit.convertToBaseUnit(other.value);
-        double resultBaseValue = firstBaseValue - secondBaseValue;
+        double resultBaseValue = performArithmetic(other, ArithmeticOperation.SUBTRACT);
         double resultValue = targetUnit.convertFromBaseUnit(resultBaseValue);
 
-        return new Quantity<>(round(resultValue), targetUnit);
+        return new Quantity<>(roundToTwoDecimals(resultValue), targetUnit);
     }
 
     public double divide(Quantity<U> other) {
-        validateOtherQuantity(other);
+        validateArithmeticOperands(other, null, false);
 
-        double firstBaseValue = this.unit.convertToBaseUnit(this.value);
-        double secondBaseValue = other.unit.convertToBaseUnit(other.value);
+        double result = performArithmetic(other, ArithmeticOperation.DIVIDE);
 
-        if (Math.abs(secondBaseValue) < 0.0000001) {
-            throw new ArithmeticException("Division by zero is not allowed");
-        }
-
-        return roundDivision(firstBaseValue / secondBaseValue);
+        return roundDivision(result);
     }
 
-    private void validateOtherQuantity(Quantity<U> other) {
+    private void validateArithmeticOperands(
+            Quantity<U> other,
+            U targetUnit,
+            boolean targetUnitRequired
+    ) {
         if (other == null) {
             throw new IllegalArgumentException("Quantity cannot be null");
         }
 
         if (this.unit.getClass() != other.unit.getClass()) {
             throw new IllegalArgumentException("Incompatible measurement categories");
+        }
+
+        if (Double.isNaN(this.value) || Double.isInfinite(this.value)) {
+            throw new IllegalArgumentException("Invalid current quantity value");
+        }
+
+        if (Double.isNaN(other.value) || Double.isInfinite(other.value)) {
+            throw new IllegalArgumentException("Invalid other quantity value");
+        }
+
+        if (targetUnitRequired) {
+            validateTargetUnit(targetUnit);
         }
     }
 
@@ -128,16 +138,46 @@ public class Quantity<U extends IMeasurable> {
         }
     }
 
+    private double performArithmetic(Quantity<U> other, ArithmeticOperation operation) {
+        double thisBaseValue = this.unit.convertToBaseUnit(this.value);
+        double otherBaseValue = other.unit.convertToBaseUnit(other.value);
+
+        return operation.compute(thisBaseValue, otherBaseValue);
+    }
+
     private double convertToBaseUnit() {
         return unit.convertToBaseUnit(value);
     }
 
-    private double round(double value) {
+    private double roundToTwoDecimals(double value) {
         return Math.round(value * 100.0) / 100.0;
     }
 
     private double roundDivision(double value) {
         return Math.round(value * 1000000.0) / 1000000.0;
+    }
+
+    private enum ArithmeticOperation {
+        ADD((a, b) -> a + b),
+
+        SUBTRACT((a, b) -> a - b),
+
+        DIVIDE((a, b) -> {
+            if (Math.abs(b) < 0.0000001) {
+                throw new ArithmeticException("Cannot divide by zero");
+            }
+            return a / b;
+        });
+
+        private final DoubleBinaryOperator operation;
+
+        ArithmeticOperation(DoubleBinaryOperator operation) {
+            this.operation = operation;
+        }
+
+        public double compute(double a, double b) {
+            return operation.applyAsDouble(a, b);
+        }
     }
 
     @Override
@@ -161,7 +201,7 @@ public class Quantity<U extends IMeasurable> {
 
     @Override
     public int hashCode() {
-        double roundedBaseValue = round(convertToBaseUnit());
+        double roundedBaseValue = roundToTwoDecimals(convertToBaseUnit());
         return Objects.hash(roundedBaseValue, unit.getClass());
     }
 

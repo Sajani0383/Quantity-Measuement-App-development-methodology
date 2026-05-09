@@ -1,7 +1,7 @@
 /**
  * IMeasurable.java
  *
- * UC12: Common Unit Interface
+ * UC13: Common Unit Interface
  *
  * This interface defines a common contract for all measurable units.
  * LengthUnit, WeightUnit, and VolumeUnit implement this interface.
@@ -10,7 +10,7 @@
  * measurement categories such as length, weight, and volume.
  *
  * @author Sajani G
- * @version 12.0
+ * @version 13.0
  * @since UC10
  */
 public interface IMeasurable {
