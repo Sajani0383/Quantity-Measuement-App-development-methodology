@@ -100,7 +100,6 @@ public class QuantityMeasurementAppTest {
         Length length2 = new Length(36.0, LengthUnit.INCHES);
         assertEquals(length1, length2);
     }
-
     @Test
     public void testFeetAndInchesNotEqual() {
         Length length1 = new Length(1.0, LengthUnit.FEET);

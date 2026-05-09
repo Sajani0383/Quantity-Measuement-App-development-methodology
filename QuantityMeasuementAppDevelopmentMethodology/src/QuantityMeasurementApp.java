@@ -17,7 +17,6 @@
  * @since UC8
  */
 public class QuantityMeasurementApp {
-
     public static boolean demonstrateLengthEquality(Length length1, Length length2) {
         return length1.equals(length2);
     }
