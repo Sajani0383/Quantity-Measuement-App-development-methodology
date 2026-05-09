@@ -1,33 +1,34 @@
 /**
- * LengthUnit.java
+ * VolumeUnit.java
  *
- * UC10 and UC11: Length Unit Enum Implementing IMeasurable
+ * UC11: Volume Unit Enum Implementing IMeasurable
  *
- * This enum defines length units and their conversion factors.
+ * This enum defines volume units and their conversion factors.
  * It implements IMeasurable so that it can be used with the
  * generic Quantity class.
  *
- * Base unit for length: Inches
+ * Base unit for volume: Litre
  *
  * Conversion factors:
- * 1 foot = 12 inches
- * 1 inch = 1 inch
- * 1 yard = 36 inches
- * 1 centimeter = 0.393701 inches
+ * 1 litre = 1 litre
+ * 1 millilitre = 0.001 litre
+ * 1 gallon = 3.78541 litres
+ *
+ * This class proves that the UC10 generic design can be extended
+ * to a new measurement category without creating a separate Volume class.
  *
  * @author Sajani G
  * @version 11.0
- * @since UC10
+ * @since UC11
  */
-public enum LengthUnit implements IMeasurable {
-    FEET(12.0),
-    INCHES(1.0),
-    YARDS(36.0),
-    CENTIMETERS(0.393701);
+public enum VolumeUnit implements IMeasurable {
+    LITRE(1.0),
+    MILLILITRE(0.001),
+    GALLON(3.78541);
 
     private final double conversionFactor;
 
-    LengthUnit(double conversionFactor) {
+    VolumeUnit(double conversionFactor) {
         this.conversionFactor = conversionFactor;
     }
 

@@ -1,22 +1,16 @@
 /**
  * IMeasurable.java
  *
- * UC10: Common Unit Interface
+ * UC10 and UC11: Common Unit Interface
  *
- * This interface defines a common contract for all measurable unit enums.
- * LengthUnit and WeightUnit both implement this interface.
+ * This interface defines a common contract for all measurable units.
+ * LengthUnit, WeightUnit, and VolumeUnit implement this interface.
  *
- * The purpose of this interface is to allow the generic Quantity class
- * to work with multiple measurement categories such as length and weight.
- *
- * Methods:
- * 1. getConversionFactor() - returns conversion factor to base unit
- * 2. convertToBaseUnit() - converts value to base unit
- * 3. convertFromBaseUnit() - converts base value to target unit
- * 4. getUnitName() - returns unit name
+ * It allows the generic Quantity class to work with different
+ * measurement categories such as length, weight, and volume.
  *
  * @author Sajani G
- * @version 10.0
+ * @version 11.0
  * @since UC10
  */
 public interface IMeasurable {

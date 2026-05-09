@@ -1,7 +1,7 @@
 /**
  * WeightUnit.java
  *
- * UC10: Weight Unit Enum Implementing IMeasurable
+ * UC10 and UC11: Weight Unit Enum Implementing IMeasurable
  *
  * This enum defines weight units and their conversion factors.
  * It implements IMeasurable so that it can be used with the
@@ -17,7 +17,7 @@
  * 1 tonne = 1000000 grams
  *
  * @author Sajani G
- * @version 10.0
+ * @version 11.0
  * @since UC10
  */
 public enum WeightUnit implements IMeasurable {
